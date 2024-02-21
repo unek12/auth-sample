@@ -1,22 +1,17 @@
-import {
-  Body,
-  Controller, Get,
-  Post, Req, UseGuards,
-} from '@nestjs/common';
-import {AuthService} from './auth.service';
-import {AuthDto} from './dto/auth.dto';
-import {CreateUserDto} from "../users/dto/create-user.dto";
-import {accessTokenGuard} from "../../guards/accessToken.guard";
-import {refreshTokenGuard} from "../../guards/refreshToken.guard";
-import {UsersService} from "../users/users.service";
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { AuthDto } from './dto/auth.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { accessTokenGuard } from '../../guards/accessToken.guard';
+import { refreshTokenGuard } from '../../guards/refreshToken.guard';
+import { UsersService } from '../users/users.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private usersService: UsersService
-  ) {
-  }
+    private usersService: UsersService,
+  ) {}
 
   @Post('signup')
   signup(@Body() createUserDto: CreateUserDto) {
@@ -31,13 +26,13 @@ export class AuthController {
   @UseGuards(refreshTokenGuard)
   @Get('refresh')
   refresh(@Req() req) {
-    return this.authService.refreshTokens(req.user)
+    return this.authService.refreshTokens(req.user);
   }
 
   @UseGuards(accessTokenGuard)
   @Get('profile')
   profile(@Req() req) {
-    return this.usersService.findById(req.user.sub)
+    return this.usersService.findById(req.user.sub);
   }
 
   // @UseGuards(TokenGuard)

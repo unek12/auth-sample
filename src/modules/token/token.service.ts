@@ -1,39 +1,39 @@
 import { Injectable } from '@nestjs/common';
-import {JwtService} from "@nestjs/jwt";
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class TokensService {
+export class TokenService {
   constructor(
+    private configService: ConfigService,
     private jwtService: JwtService
-  ) {
-  }
-  async getTokens(userId: number, username: string) {
+  ) {}
+  async getTokens(userId: string, username: string) {
     const accessToken = await this.jwtService.signAsync(
       {
-        sub: userId,
+        id: userId,
         username,
       },
       {
-        // secret: this.configService.get<string>('JWT_ACCESS_SECRET') || 'secret key',
-        secret: process.env['JWT_ACCESS_SECRET'] || 'secret key',
-        expiresIn: '10s',
+        secret: this.configService.getOrThrow('JWT_ACCESS_SECRET'),
+        expiresIn: this.configService.getOrThrow('JWT_ACCESS_EXPIRE'),
       },
-    )
+    );
 
     const refreshToken = await this.jwtService.signAsync(
       {
-        sub: userId,
+        id: userId,
         username,
       },
       {
-        secret: process.env['JWT_ACCESS_SECRET'] || 'secret key',
-        expiresIn: '15m',
+        secret: this.configService.get('JWT_REFRESH_SECRET'),
+        expiresIn: this.configService.get('JWT_REFRESH_EXPIRE'),
       },
-    )
+    );
 
     return {
       accessToken,
-      refreshToken
+      refreshToken,
     };
   }
 }

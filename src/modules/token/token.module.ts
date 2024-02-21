@@ -1,15 +1,14 @@
-import {Module} from '@nestjs/common';
-import {TokensService} from './tokens.service';
-import {JwtModule} from "@nestjs/jwt";
-import {ConfigService} from "@nestjs/config";
+import { Module } from '@nestjs/common';
+import { TokenService } from './token.service';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: process.env['JWT_SECRET']
-    })
+    ConfigModule,
+    JwtModule
   ],
-  providers: [TokensService]
+  providers: [TokenService],
+  exports: [TokenService],
 })
-export class TokensModule {
-}
+export class TokenModule {}
